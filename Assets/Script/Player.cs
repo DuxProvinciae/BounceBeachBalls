@@ -1,19 +1,20 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Player : MonoBehaviour
 {
+    public UnityEvent UpdateScore;
+    //int Id = 0;
+
+    public delegate void TargetEvents();
+    public static event TargetEvents OnTargetTouched;
+    
     [SerializeField] private float zForce = 1f;
     [SerializeField] private float xForce = 1f;
-    [SerializeField] private int Score = 0;
-    [SerializeField] private TMP_Text ScoreText;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     void Update()
@@ -34,19 +35,23 @@ public class Player : MonoBehaviour
         {   
             GetComponent<Rigidbody>().AddForce(0,0,zForce);
         }
+    }
 
-    
-}
-    
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (other.gameObject.CompareTag("Target"))
+        if (collision.gameObject.CompareTag("Target"))
         {
-            Score--;
-            ScoreText.text = "Score : " + Score.ToString();
+            UpdateScore?.Invoke();
+            OnTargetTouched?.Invoke();
+            //Score--;
+            //ScoreText.text = "Score : " + Score.ToString();
         }
         
     }
-    
+    //public void SelectScenario (int number)
+    //{
+    //    _appData.ActualScenairio = _appData.Scanarios[number];
+    //}
+
 }
 
